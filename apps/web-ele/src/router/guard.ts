@@ -9,7 +9,7 @@ import { accessRoutes, coreRouteNames } from '#/router/routes';
 import { useAuthStore } from '#/store';
 
 import { generateAccess } from './access';
-
+import { isTokenExpired } from './jwtHelper';
 /**
  * 通用守卫配置
  * @param router
@@ -60,6 +60,29 @@ function setupAccessGuard(router: Router) {
         );
       }
       return true;
+    }
+
+    const storedToken =
+      accessStore.accessToken || localStorage.getItem('accessToken');
+    if (!storedToken || isTokenExpired(storedToken)) {
+      // 清除Store和本地存储中的过期Token
+      accessStore.setAccessToken(null);
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('accessCodes');
+      localStorage.removeItem('isLockScreen');
+
+      // 跳转登录页（保留原有redirect逻辑）
+      if (to.fullPath !== LOGIN_PATH) {
+        return {
+          path: LOGIN_PATH,
+          query:
+            to.fullPath === preferences.app.defaultHomePath
+              ? {}
+              : { redirect: encodeURIComponent(to.fullPath) },
+          replace: true,
+        };
+      }
+      return to;
     }
 
     // accessToken 检查

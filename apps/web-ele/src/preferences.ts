@@ -8,6 +8,13 @@ import { defineOverridesPreferences } from '@vben/preferences';
 export const overridesPreferences = defineOverridesPreferences({
   // overrides
   app: {
+    enableRefreshToken: true, // 开启自动刷新
+    loginExpiredMode: 'page', // Token过期时弹窗提示
     name: import.meta.env.VITE_APP_TITLE,
+
+    accessMode: 'frontend',
+  },
+  theme: {
+    builtinType: 'mixed',
   },
 });

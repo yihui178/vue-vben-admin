@@ -30,11 +30,21 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   /**
    * 重新认证逻辑
    */
+  // 在 createRequestClient 函数的 doReAuthenticate 中修改
   async function doReAuthenticate() {
     console.warn('Access token or refresh token is invalid or expired. ');
     const accessStore = useAccessStore();
     const authStore = useAuthStore();
+
+    // 关键补充：清除本地存储中的Token及相关状态（与你的存储键名对应）
+    const STORAGE_KEYS = ['accessToken', 'accessCodes', 'isLockScreen'];
+    STORAGE_KEYS.forEach((key) => {
+      localStorage.removeItem(key); // 若用sessionStorage，替换为 sessionStorage.removeItem(key)
+    });
+
+    // 原有逻辑：清除Store中的Token
     accessStore.setAccessToken(null);
+
     if (
       preferences.app.loginExpiredMode === 'modal' &&
       accessStore.isAccessChecked
@@ -42,6 +52,8 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
       accessStore.setLoginExpired(true);
     } else {
       await authStore.logout();
+      // 额外补充：确保登出后跳登录页（避免路由守卫死循环）
+      window.location.href = '/auth/login';
     }
   }
 
