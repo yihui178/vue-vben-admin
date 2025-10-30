@@ -21,6 +21,10 @@ export default defineConfig(async () => {
             target: 'http://localhost:8080',
             ws: true,
           },
+          '/captcha.jpg': {
+            changeOrigin: true,
+            target: 'http://localhost:8080',
+          },
         },
       },
     },
