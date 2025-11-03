@@ -5,6 +5,7 @@ export namespace AuthApi {
   export interface LoginParams {
     password?: string;
     username?: string;
+    captcha?: string;
   }
 
   /** 登录接口返回值 */
@@ -15,6 +16,18 @@ export namespace AuthApi {
   export interface RefreshTokenResult {
     data: string;
     status: number;
+  }
+
+  /** 校验验证码参数 */
+  export interface VerifyCaptchaParams {
+    captcha: string;
+  }
+
+  /** 校验验证码返回值（后端标准响应可能包含 code/message/data） */
+  export interface VerifyCaptchaResult {
+    code?: number;
+    data?: string;
+    message?: string;
   }
 }
 
@@ -49,4 +62,15 @@ export async function logoutApi() {
  */
 export async function getAccessCodesApi() {
   return requestClient.get<string[]>('/auth/codes');
+}
+
+/**
+ * 校验验证码（统一到 API 层）
+ */
+export async function verifyCaptchaApi(data: AuthApi.VerifyCaptchaParams) {
+  // 保持与其它接口一致，使用 requestClient 及相对路径
+  return requestClient.post<AuthApi.VerifyCaptchaResult>(
+    '/auth/verifyCaptcha',
+    data,
+  );
 }

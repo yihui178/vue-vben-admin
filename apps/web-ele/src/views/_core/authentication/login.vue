@@ -2,9 +2,10 @@
 import type { VbenFormSchema } from '@vben/common-ui';
 import type { BasicOption } from '@vben/types';
 
-import { computed, markRaw } from 'vue';
+import { computed, markRaw, ref } from 'vue';
 
 import { AuthenticationLogin, SliderCaptcha, z } from '@vben/common-ui';
+import { verifyCaptchaApi } from '#/api';
 import { $t } from '@vben/locales';
 
 import { useAuthStore } from '#/store';
@@ -12,6 +13,50 @@ import { useAuthStore } from '#/store';
 defineOptions({ name: 'Login' });
 
 const authStore = useAuthStore();
+const formRef = ref();
+const captchaToken = ref(''); // 创建一个独立的、非表单的 ref 来存储 token
+
+// 验证通过时回调
+async function handleCaptchaSuccess(result?: any) {
+  const token =
+    result?.token || Math.random().toString(36).substring(2) + Date.now();
+  captchaToken.value = token;
+  console.log('滑块验证成功，已设置 token:', token);
+
+  const formApi = await formRef.value?.getFormApi();
+
+  await formApi?.setValues({ captcha: true });
+  await formApi?.validate(['captcha']);
+
+  verifyCaptcha(token);
+}
+
+// 拦截表单提交，注入正确的 captcha token
+async function handleLogin(formData: any) {
+  const finalData = {
+    ...formData,
+    // 从本地 ref 获取 token，并覆盖表单中的 captcha 布尔值
+    captcha: captchaToken.value,
+  };
+
+  await authStore.authLogin(finalData);
+}
+
+// 向后端发送验证码验证请求（统一走 API 模块）
+async function verifyCaptcha(captchaToken: string) {
+  try {
+    const resp = await verifyCaptchaApi({ captcha: captchaToken });
+    // requestClient 可能已将响应 data 解包，也可能保留标准结构
+    const isOk = (resp as any)?.code === 0 || typeof resp === 'string';
+    if (isOk) {
+      console.log('前端验证码验证通过响应', resp);
+    } else {
+      console.error('前端验证码验证失败：', resp);
+    }
+  } catch (error) {
+    console.error('前端验证码验证请求失败', error);
+  }
+}
 
 const MOCK_USER_OPTIONS: BasicOption[] = [
   {
@@ -79,21 +124,29 @@ const formSchema = computed((): VbenFormSchema[] => {
       rules: z.string().min(1, { message: $t('authentication.passwordTip') }),
     },
     {
+      // 可见的滑块字段，其值为布尔类型
       component: markRaw(SliderCaptcha),
       fieldName: 'captcha',
-      rules: z.boolean().refine((value) => value, {
+      label: '验证', // 硬编码 label 以避免 i18n 警告
+      rules: z.boolean().refine((val) => val === true, {
         message: $t('authentication.verifyRequiredTip'),
       }),
+      defaultValue: false,
+      componentProps: {
+        onSuccess: handleCaptchaSuccess,
+      },
     },
+    // 完全移除隐藏的 captchaToken 字段
   ];
 });
 </script>
 
 <template>
   <AuthenticationLogin
+    ref="formRef"
     :form-schema="formSchema"
     :loading="authStore.loginLoading"
-    @submit="authStore.authLogin"
+    @submit="handleLogin"
     :show-code-login="true"
     :show-forget-password="true"
     :show-qrcode-login="true"
