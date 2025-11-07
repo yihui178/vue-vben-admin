@@ -12,9 +12,10 @@ export const overridesPreferences = defineOverridesPreferences({
     loginExpiredMode: 'page', // Token过期时弹窗提示
     name: import.meta.env.VITE_APP_TITLE,
 
-    accessMode: 'frontend',
+    accessMode: 'backend',
+    defaultHomePath: '/dashboard/workspace'
   },
-  theme: {
-    builtinType: 'mixed',
-  },
+  // theme: {
+  //   builtinType: 'mixed',
+  // },
 });
