@@ -10,6 +10,12 @@ export default defineEventHandler(() => {
 <li><a href="/api/auth/codes">/api/auth/codes</a></li>
 <li><a href="/api/auth/login">/api/auth/login</a></li>
 <li><a href="/api/upload">/api/upload</a></li>
+
+
+<li><a href="/api/access/codes">/api/access/codes</a></li>
+<li><a href="/api/course/add">/api/course/add</a></li>
+<li><a href="/api/course/page">/api/course/page</a></li>
+<li><a href="/api/course/delete">/api/course/delete</a></li>
 </ul>
 `;
 });

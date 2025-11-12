@@ -36,12 +36,25 @@ export const MOCK_USERS: UserInfo[] = [
 export const MOCK_CODES = [
   // super
   {
-    codes: ['AC_100100', 'AC_100110', 'AC_100120', 'AC_100010'],
+    codes: ['AC_100100', 
+      'AC_100110', 
+      'AC_100120', 
+      'AC_100010',
+      'COURSE_ADD',   // 新增课程权限
+      'COURSE_EDIT',  // 编辑课程权限
+      'COURSE_DEL'
+    ],
     username: 'vben',
   },
   {
     // admin
-    codes: ['AC_100010', 'AC_100020', 'AC_100030'],
+    codes: ['AC_100010', 
+      'AC_100020',
+      'AC_100030',
+      'COURSE_ADD',   // 新增课程权限
+      'COURSE_EDIT',  // 编辑课程权限
+      'COURSE_DEL'
+    ],
     username: 'admin',
   },
   {

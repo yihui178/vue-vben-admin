@@ -17,7 +17,7 @@ import { initSetupVbenForm } from './adapter/form';
 import App from './app.vue';
 import { router } from './router';
 
-async function bootstrap(namespace: string) {
+async function bootstrap(namespace: string,ElementPlus: any) {
   // 初始化组件适配器
   await initComponentAdapter();
 
@@ -33,7 +33,7 @@ async function bootstrap(namespace: string) {
   //   zIndex: 2000,
   // });
   const app = createApp(App);
-
+  app.use(ElementPlus);
   // 注册Element Plus提供的v-loading指令
   app.directive('loading', ElLoading.directive);
 
