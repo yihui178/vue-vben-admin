@@ -80,7 +80,7 @@ const formSchema = computed((): VbenFormSchema[] => {
 
 // ！！核心修改：用 fetch 发请求，无任何外部依赖
 async function handleSubmit(value: Recordable<any>) {
-  console.log('register submit:', value);
+  console.log('注册字段:', value);
   loading.value = true; // 开启加载状态，防止重复点击
 
   try {
@@ -104,12 +104,12 @@ async function handleSubmit(value: Recordable<any>) {
       // window.location.href = '/login';
       router.push('/auth/login');
     } else {
-      ElMessage.success(`注册失败：${resData.msg || '请检查输入信息'}`);
+      ElMessage.error(`注册失败：${resData.message || '请检查输入信息'}`);
     }
   } catch (error: any) {
     // 4. 处理网络错误（如后端没启动、地址错）
     console.error('注册请求失败:', error);
-    ElMessage.success(`请求失败：${error.message || '后端服务未启动或网络异常'}`);
+    ElMessage.error(`请求失败：${error.message || '后端服务未启动或网络异常'}`);
   } finally {
     // 5. 无论成功/失败，都关闭加载状态
     loading.value = false;

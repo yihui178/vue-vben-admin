@@ -136,23 +136,29 @@ const formSchema = computed((): VbenFormSchema[] => {
         onSuccess: handleCaptchaSuccess,
       },
     },
-    // 完全移除隐藏的 captchaToken 字段
   ];
 });
 </script>
-
+<!-- 
+showCodeLogin?: boolean;        是否显示验证码登录
+showForgetPassword?: boolean;   是否显示忘记密码
+showQrcodeLogin?: boolean;      是否显示二维码登录
+showRegister?: boolean;         是否显示注册按钮
+showRememberMe?: boolean;       是否显示记住账号
+showThirdPartyLogin?: boolean;  是否显示第三方登录
+-->
 <template>
   <AuthenticationLogin
     ref="formRef"
     :form-schema="formSchema"
     :loading="authStore.loginLoading"
     @submit="handleLogin"
-    :show-code-login="true"
+    :show-code-login="false"
     :show-forget-password="true"
-    :show-qrcode-login="true"
+    :show-qrcode-login="false"
     :show-register="true"
     :show-remember-me="true"
-    :show-third-party-login="true"
+    :show-third-party-login="false"
     sub-title="子标题"
     title="标题"
   />
