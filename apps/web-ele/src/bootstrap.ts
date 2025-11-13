@@ -8,7 +8,6 @@ import '@vben/styles';
 import '@vben/styles/ele';
 
 import { useTitle } from '@vueuse/core';
-import { ElLoading } from 'element-plus';
 
 import { $t, setupI18n } from '#/locales';
 
@@ -17,7 +16,7 @@ import { initSetupVbenForm } from './adapter/form';
 import App from './app.vue';
 import { router } from './router';
 
-async function bootstrap(namespace: string,ElementPlus: any) {
+async function bootstrap(namespace: string, ElementPlus: any) {
   // 初始化组件适配器
   await initComponentAdapter();
 
@@ -33,10 +32,10 @@ async function bootstrap(namespace: string,ElementPlus: any) {
   //   zIndex: 2000,
   // });
   const app = createApp(App);
-  app.use(ElementPlus);
-  // 注册Element Plus提供的v-loading指令
-  app.directive('loading', ElLoading.directive);
 
+  // 注册Element Plus提供的v-loading指令
+  // app.directive('loading', ElLoading.directive);
+  app.use(ElementPlus);
   // 注册Vben提供的v-loading和v-spinning指令
   registerLoadingDirective(app, {
     loading: false, // Vben提供的v-loading指令和Element Plus提供的v-loading指令二选一即可，此处false表示不注册Vben提供的v-loading指令
