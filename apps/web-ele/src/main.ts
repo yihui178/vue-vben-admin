@@ -3,6 +3,11 @@ import { unmountGlobalLoading } from '@vben/utils';
 
 import { overridesPreferences } from './preferences';
 
+import ElementPlus from 'element-plus';
+import 'element-plus/dist/index.css'; // 导入 Element Plus 样式
+
+
+
 /**
  * 应用初始化完成之后再进行页面加载渲染
  */
@@ -22,7 +27,7 @@ async function initApplication() {
   // 启动应用并挂载
   // vue应用主要逻辑及视图
   const { bootstrap } = await import('./bootstrap');
-  await bootstrap(namespace);
+  await bootstrap(namespace,ElementPlus);
 
   // 移除并销毁loading
   unmountGlobalLoading();

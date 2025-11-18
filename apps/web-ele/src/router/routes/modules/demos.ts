@@ -16,7 +16,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           title: $t('demos.elementPlus'),
-          authority: ['super'],
+          // authority: ['super'],
           // menuVisibleWithForbidden: true,
         },
         name: 'NaiveDemos',
@@ -26,7 +26,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           title: $t('demos.form'),
-          authority: ['super', 'admin'],
+          // authority: ['super', 'admin'],
           // menuVisibleWithForbidden: true,
         },
         name: 'BasicForm',

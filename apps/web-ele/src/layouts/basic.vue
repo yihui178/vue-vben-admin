@@ -130,12 +130,20 @@ watch(
 <template>
   <BasicLayout @clear-preferences-and-logout="handleLogout">
     <template #user-dropdown>
-      <UserDropdown
+      <!-- <UserDropdown
         :avatar
         :menus
         :text="userStore.userInfo?.realName"
         description="ann.vben@gmail.com"
         tag-text="Pro"
+        @logout="handleLogout"
+      /> -->
+      <UserDropdown
+        :avatar
+        :menus
+        :text="userStore.userInfo?.name"
+        :description="userStore.userInfo?.email"
+        :tag-text="userStore.userInfo?.role"
         @logout="handleLogout"
       />
     </template>
