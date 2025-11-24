@@ -16,6 +16,12 @@ export default defineEventHandler(() => {
 <li><a href="/api/course/add">/api/course/add</a></li>
 <li><a href="/api/course/page">/api/course/page</a></li>
 <li><a href="/api/course/delete">/api/course/delete</a></li>
+
+
+<li><a href="/api/news/page?page=1&pageSize=5">/api/news/page</a></li>
+<li><a href="/api/news/add">/api/news/add</a></li>
+<li><a href="/api/news/update">/api/news/update</a></li>
+<li><a href="/api/news/delete">/api/news/delete</a></li>
 </ul>
 `;
 });
