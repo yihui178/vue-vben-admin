@@ -30,7 +30,7 @@ export function useCourse() {
   const courseList = ref<any[]>([]);
   const total = ref(0);
   const page = ref(1);
-  const pageSize = ref(5);
+  const pageSize = ref(8);
   const keyword = ref('');
   // ==================== 课程表单状态 ====================
   const formVisible = ref(false);

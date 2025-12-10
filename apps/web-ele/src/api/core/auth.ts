@@ -1,76 +1,61 @@
 import { baseRequestClient, requestClient } from '#/api/request';
-
 export namespace AuthApi {
-  /** 登录接口参数 */
+  /** 登录参数 */
   export interface LoginParams {
-    password?: string;
-    username?: string;
-    captcha?: string;
+    username: string;
+    password: string;
+    captcha: string;
   }
-
-  /** 登录接口返回值 */
+  /** 登录返回值 */
   export interface LoginResult {
     accessToken: string;
+    refreshToken: string;
   }
-
+  /** 刷新 Token 返回值 */
   export interface RefreshTokenResult {
-    data: string;
-    status: number;
+    accessToken: string;
   }
-
-  /** 校验验证码参数 */
+  /** 验证码参数 */
   export interface VerifyCaptchaParams {
     captcha: string;
   }
-
-  /** 校验验证码返回值（后端标准响应可能包含 code/message/data） */
-  export interface VerifyCaptchaResult {
-    code?: number;
-    data?: string;
-    message?: string;
-  }
 }
-
 /**
  * 登录
  */
-
 export async function loginApi(data: AuthApi.LoginParams) {
   return requestClient.post<AuthApi.LoginResult>('/auth/login', data);
 }
-
 /**
- * 刷新accessToken
+ * 刷新 Token
  */
-export async function refreshTokenApi() {
-  return baseRequestClient.post<AuthApi.RefreshTokenResult>('/auth/refresh', {
-    withCredentials: true,
-  });
+export async function refreshTokenApi(refreshToken: string) {
+  return baseRequestClient.post<AuthApi.RefreshTokenResult>(
+    '/auth/refreshToken',
+    { refreshToken }
+  );
 }
-
 /**
- * 退出登录
+ * 登出
  */
 export async function logoutApi() {
-  return baseRequestClient.post('/auth/logout', {
-    withCredentials: true,
-  });
+  return requestClient.post('/auth/logout');
 }
-
 /**
  * 获取用户权限码
  */
 export async function getAccessCodesApi() {
   return requestClient.get<string[]>('/auth/codes');
 }
-
 /**
- * 校验验证码（统一到 API 层）
+ * 获取用户信息（✅ 只在这里定义一次）
+ */
+export async function getUserInfoApi() {
+  return requestClient.get('/user/info');
+}
+/**
+ * 验证码校验
  */
 export async function verifyCaptchaApi(data: AuthApi.VerifyCaptchaParams) {
-  // 保持与其它接口一致，使用 requestClient 及相对路径
-  return requestClient.post<AuthApi.VerifyCaptchaResult>(
-    '/auth/verifyCaptcha',
-    data,
-  );
+  return requestClient.post('/auth/verifyCaptcha', data);
 }
