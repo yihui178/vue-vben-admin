@@ -37,12 +37,17 @@ const {
 </script>
 <template>
   <div class="p-4">
+    <!-- 🔥 添加页面说明（可选） -->
+    <div class="mb-3">
+      <!-- <h2 class="text-lg font-semibold">俱乐部动态管理</h2> -->
+      <p class="text-xs text-gray-500 mt-1">发布和管理活动、技巧、安全等动态内容</p>
+    </div>
     <!-- 头部搜索栏 -->
     <div class="mb-4 flex items-center justify-between gap-3">
       <div class="flex items-center gap-3 flex-1">
         <el-input
           v-model="keyword"
-          placeholder="搜索新闻标题或内容..."
+          placeholder="搜索动态标题或内容..."
           clearable
           class="w-1/3"
           @clear="fetchNews"
@@ -99,7 +104,7 @@ const {
           @click="openAddDialog"
         >
           <span class="i-mdi:plus mr-1" />
-          发布新闻
+          发布动态
         </el-button>
       </div>
     </div>

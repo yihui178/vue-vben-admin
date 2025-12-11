@@ -23,7 +23,15 @@ const DEFAULT_FORM: CourseForm = {
   online: false,
   highlightIds: [],
 };
-const CATEGORY_OPTIONS = ['编程语言', '数据科学', '数据库', '后端开发', '前端开发'];
+const CATEGORY_OPTIONS = [
+  '新手入门',
+  '进阶技巧',
+  '保养维修',
+  '安全培训',
+  '骑行技巧',
+  '越野技巧',
+  '改装知识',
+];
 export function useCourse() {
   // ==================== 课程列表状态 ====================
   const loading = ref(false);
@@ -186,6 +194,55 @@ export function useCourse() {
       }
     }
   };
+
+  // 🔥 新增：假报名功能
+  const enrollCourse = async (row: any) => {
+    try {
+      await ElMessageBox.confirm(
+        `确认报名【${row.courseName}】吗？`,
+        '课程报名',
+        {
+          confirmButtonText: '确认报名',
+          cancelButtonText: '取消',
+          type: 'info',
+        }
+      );
+      
+      ElMessage.success({
+        message: `报名成功！课程：${row.courseName}`,
+        duration: 3000,
+        showClose: true,
+      });
+    } catch (error: any) {
+      if (error !== 'cancel') {
+        console.error('报名失败:', error);
+      }
+    }
+  };
+  // 🔥 新增：查看课程详情
+  const viewCourseDetail = (row: any) => {
+    ElMessageBox.alert(
+      `
+      <div style="text-align: left;">
+        <p><strong>课程名称：</strong>${row.courseName}</p>
+        <p><strong>课程分类：</strong>${row.category}</p>
+        <p><strong>授课方式：</strong>${row.online ? '线上课程' : '线下实操'}</p>
+        <p><strong>课程描述：</strong>${row.description}</p>
+        <p style="margin-top: 12px;"><strong>课程亮点：</strong></p>
+        <ul style="padding-left: 20px;">
+          ${row.highlightIds?.map((id: number) => `<li>${highlightMap.value[id]}</li>`).join('') || '<li>暂无亮点</li>'}
+        </ul>
+      </div>
+      `,
+      '课程详情',
+      {
+        dangerouslyUseHTMLString: true,
+        confirmButtonText: '关闭',
+      }
+    );
+  };
+
+
   // ==================== 生命周期 ====================
   onMounted(() => {
     fetchCourses();
@@ -223,5 +280,9 @@ export function useCourse() {
     saveNewHighlight,
     saveEditedHighlight,
     deleteHighlight,
+
+    // 报名和详情方法
+    enrollCourse,
+    viewCourseDetail,
   };
 }

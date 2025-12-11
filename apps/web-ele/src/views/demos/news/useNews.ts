@@ -22,8 +22,22 @@ interface ImageState {
   shouldDeleteOld: boolean;
 }
 // ==================== 常量 ====================
-const CATEGORY_OPTIONS = ['国内新闻', '本地新闻', '国际信息', '游戏新闻', '最新动态'];
-const TAG_OPTIONS = ['动态', '国内', '国际', '军事', '游戏'];
+const CATEGORY_OPTIONS = [
+  '俱乐部活动',      
+  '骑行技巧',        
+  '安全知识',        
+  '车辆保养',        
+  '最新动态',        
+  '会员风采',        
+];
+const TAG_OPTIONS = [
+  '动态',
+  '活动',          
+  '教学',        
+  '安全',         
+  '保养',         
+  '推荐',          // 新增
+];
 const DEFAULT_FORM: NewsForm = {
   id: null,
   newsName: '',

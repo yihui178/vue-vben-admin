@@ -22,7 +22,7 @@ const localVisible = computed({
 <template>
   <el-dialog
     v-model="localVisible"
-    :title="form.id ? '编辑课程' : '新增课程'"
+    :title="form.id ? '编辑培训课程' : '新增培训课程'"
     width="720px"
     class="course-dialog"
     align-center
@@ -37,12 +37,21 @@ const localVisible = computed({
       <el-row :gutter="16">
         <el-col :span="12">
           <el-form-item label="课程名称" required>
-            <el-input v-model="form.courseName" maxlength="20" show-word-limit />
+            <el-input 
+              v-model="form.courseName" 
+              placeholder="例如：新手骑行入门培训"
+              maxlength="20" 
+              show-word-limit 
+            />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="课程分类" required>
-            <el-select v-model="form.category" placeholder="请选择" style="width: 100%">
+            <el-select 
+              v-model="form.category" 
+              placeholder="请选择课程分类" 
+              style="width: 100%"
+            >
               <el-option
                 v-for="c in categoryOptions"
                 :key="c"
@@ -55,9 +64,15 @@ const localVisible = computed({
       </el-row>
       <!-- 第二行：是否线上课程 -->
       <el-row :gutter="16">
-        <el-col :span="12">
-          <el-form-item label="是否线上课程" required>
-            <el-switch v-model="form.online" />
+        <el-col :span="24">
+          <el-form-item label="授课方式" required>
+            <el-radio-group v-model="form.online">
+              <el-radio :value="false">线下实操</el-radio>
+              <el-radio :value="true">线上课程</el-radio>
+            </el-radio-group>
+            <div class="form-tip mt-1 ml-1">
+              线下课程需到场地参与实操训练，线上课程支持远程学习。
+            </div>
           </el-form-item>
         </el-col>
       </el-row>
@@ -66,8 +81,9 @@ const localVisible = computed({
         <el-input
           type="textarea"
           v-model="form.description"
-          :rows="3"
-          maxlength="100"
+          placeholder="请详细描述课程内容、适合人群、学习目标等"
+          :rows="4"
+          maxlength="200"
           show-word-limit
         />
       </el-form-item>
@@ -77,7 +93,7 @@ const localVisible = computed({
           <el-select
             v-model="form.highlightIds"
             multiple
-            placeholder="请选择亮点"
+            placeholder="请选择课程亮点（可多选）"
             class="flex-1"
           >
             <el-option
@@ -92,14 +108,14 @@ const localVisible = computed({
           </el-button>
         </div>
         <div class="form-tip">
-          可以在「管理亮点」中新增 / 编辑 / 删除亮点。
+          亮点用于展示课程特色，例如：小班教学、资深教练、免费复训等。
         </div>
       </el-form-item>
     </el-form>
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="localVisible = false">取消</el-button>
-        <el-button type="primary" @click="emit('save')">保存</el-button>
+        <el-button type="primary" @click="emit('save')">保存课程</el-button>
       </div>
     </template>
   </el-dialog>
@@ -112,12 +128,12 @@ const localVisible = computed({
   margin-top: 4px;
 }
 .course-form .el-form-item {
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 }
 .form-tip {
   font-size: 12px;
   color: #909399;
-  margin-top: 4px;
+  line-height: 1.5;
 }
 .dialog-footer {
   display: flex;

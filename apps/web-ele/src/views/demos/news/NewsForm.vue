@@ -23,7 +23,7 @@ const localVisible = computed({
   get: () => props.visible,
   set: (val: boolean) => emit('update:visible', val),
 });
-// ✅ 图片错误处理函数
+// 图片错误处理函数
 const handlePreviewError = () => {
   props.imageState.previewUrl = '';
   ElMessage.error('图片加载失败，请检查URL或重新上传');
@@ -32,36 +32,37 @@ const handlePreviewError = () => {
 <template>
   <el-dialog
     v-model="localVisible"
-    :title="form.id ? '编辑新闻' : '发布新闻'"
+    :title="form.id ? '编辑动态' : '发布动态'"
     width="720px"
     align-center
   >
     <el-form :ref="formRef" :model="form" label-position="top">
-      <el-form-item label="新闻标题" required>
+      <!-- 🔥 只改 label 文字 -->
+      <el-form-item label="动态标题" required>
         <el-input
           v-model="form.newsName"
           maxlength="20"
           show-word-limit
-          placeholder="请输入新闻标题（不超过20字）"
+          placeholder="例如：春季环城骑行活动圆满结束"
         />
       </el-form-item>
-      <el-form-item label="新闻内容" required>
+      <el-form-item label="动态内容" required>
         <el-input
           type="textarea"
           v-model="form.newsContent"
           :rows="4"
           maxlength="200"
           show-word-limit
-          placeholder="请输入新闻正文内容（不超过200字）"
+          placeholder="请输入详细的动态内容"
         />
       </el-form-item>
       <el-row :gutter="16">
         <el-col :span="12">
-          <el-form-item label="新闻分类" required>
+          <el-form-item label="动态分类" required>
             <el-select
               v-model="form.newsCategory"
               multiple
-              placeholder="请选择分类"
+              placeholder="请选择分类（可多选）"
               style="width: 100%"
             >
               <el-option
@@ -74,11 +75,11 @@ const handlePreviewError = () => {
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="新闻标签" required>
+          <el-form-item label="动态标签" required>
             <el-select
               v-model="form.newsTags"
               multiple
-              placeholder="请选择标签"
+              placeholder="请选择标签（可多选）"
               style="width: 100%"
             >
               <el-option
@@ -91,16 +92,16 @@ const handlePreviewError = () => {
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="新闻简介" required>
+      <el-form-item label="动态简介" required>
         <el-input
           type="textarea"
           v-model="form.newsDescription"
           :rows="2"
-          placeholder="请输入新闻简要描述"
+          placeholder="一句话概括本条动态的核心内容"
         />
       </el-form-item>
-      <!-- 图片上传区域 -->
-      <el-form-item label="新闻配图">
+      <!-- 图片上传区域完全不动 -->
+      <el-form-item label="配图（可选）">
         <div class="w-full">
           <el-switch 
             v-model="form.hasImage"
