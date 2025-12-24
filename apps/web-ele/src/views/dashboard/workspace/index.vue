@@ -255,7 +255,7 @@ onMounted(() => {
           title="俱乐部动态" 
         />
       </div>
-      <div class="w-full lg:w-2/5">
+      <div class="w-full lg:w-2/5"> 
         <WorkbenchQuickNav
           :items="quickNavItems"
           class="mt-5 lg:mt-0"
