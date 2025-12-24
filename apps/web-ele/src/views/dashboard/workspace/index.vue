@@ -5,8 +5,9 @@ import type {
   WorkbenchTodoItem,
   WorkbenchTrendItem,
 } from '@vben/common-ui';
+import type { EchartsUIType } from '@vben/plugins/echarts';
 
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 import {
@@ -17,220 +18,215 @@ import {
   WorkbenchTodo,
   WorkbenchTrends,
 } from '@vben/common-ui';
+import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
 import { preferences } from '@vben/preferences';
 import { useUserStore } from '@vben/stores';
-import { openWindow } from '@vben/utils';
-
-import AnalyticsVisitsSource from '../analytics/analytics-visits-source.vue';
+import { requestClient } from '#/api/request';
 
 const userStore = useUserStore();
+const router = useRouter();
 
-// 这是一个示例数据，实际项目中需要根据实际情况进行调整
-// url 也可以是内部路由，在 navTo 方法中识别处理，进行内部跳转
-// 例如：url: /dashboard/workspace
-const projectItems: WorkbenchProjectItem[] = [
-  {
-    color: '',
-    content: '不要等待机会，而要创造机会。',
-    date: '2021-04-01',
-    group: '开源组',
-    icon: 'carbon:logo-github',
-    title: 'Github',
-    url: 'https://github.com',
-  },
-  {
-    color: '#3fb27f',
-    content: '现在的你决定将来的你。',
-    date: '2021-04-01',
-    group: '算法组',
-    icon: 'ion:logo-vue',
-    title: 'Vue',
-    url: 'https://vuejs.org',
-  },
-  {
-    color: '#e18525',
-    content: '没有什么才能比努力更重要。',
-    date: '2021-04-01',
-    group: '上班摸鱼',
-    icon: 'ion:logo-html5',
-    title: 'Html5',
-    url: 'https://developer.mozilla.org/zh-CN/docs/Web/HTML',
-  },
-  {
-    color: '#bf0c2c',
-    content: '热情和欲望可以突破一切难关。',
-    date: '2021-04-01',
-    group: 'UI',
-    icon: 'ion:logo-angular',
-    title: 'Angular',
-    url: 'https://angular.io',
-  },
-  {
-    color: '#00d8ff',
-    content: '健康的身体是实现目标的基石。',
-    date: '2021-04-01',
-    group: '技术牛',
-    icon: 'bx:bxl-react',
-    title: 'React',
-    url: 'https://reactjs.org',
-  },
-  {
-    color: '#EBD94E',
-    content: '路是走出来的，而不是空想出来的。',
-    date: '2021-04-01',
-    group: '架构组',
-    icon: 'ion:logo-javascript',
-    title: 'Js',
-    url: 'https://developer.mozilla.org/zh-CN/docs/Web/JavaScript',
-  },
-];
-
-// 同样，这里的 url 也可以使用以 http 开头的外部链接
+// ========== 俱乐部快速入口 ==========
 const quickNavItems: WorkbenchQuickNavItem[] = [
   {
     color: '#1fdaca',
     icon: 'ion:home-outline',
     title: '首页',
-    url: '/',
+    url: '/dashboard/workspace',
   },
   {
     color: '#bf0c2c',
-    icon: 'ion:grid-outline',
-    title: '仪表盘',
-    url: '/dashboard',
+    icon: 'ion:people-outline',
+    title: '会员管理',
+    url: '/demos/member',
   },
   {
     color: '#e18525',
-    icon: 'ion:layers-outline',
-    title: '组件',
-    url: '/demos/features/icons',
+    icon: 'ion:bicycle-outline',
+    title: '活动管理',
+    url: '/demos/activity',
   },
   {
     color: '#3fb27f',
-    icon: 'ion:settings-outline',
-    title: '系统管理',
-    url: '/demos/features/login-expired', // 这里的 URL 是示例，实际项目中需要根据实际情况进行调整
+    icon: 'ion:school-outline',
+    title: '课程管理',
+    url: '/demos/course',
   },
   {
     color: '#4daf1bc9',
-    icon: 'ion:key-outline',
-    title: '权限管理',
-    url: '/demos/access/page-control',
+    icon: 'ion:newspaper-outline',
+    title: '动态管理',
+    url: '/demos/news',
   },
   {
     color: '#00d8ff',
     icon: 'ion:bar-chart-outline',
-    title: '图表',
-    url: '/analytics',
+    title: '数据分析',
+    url: '/dashboard/analytics',
   },
 ];
 
+// ========== 推荐活动 ==========
+const projectItems = ref<WorkbenchProjectItem[]>([
+  {
+    title: '周末骑行活动',
+    content: '探索城市周边美景，享受骑行乐趣',
+    date: '2024-12-15',
+    group: '骑行',
+    icon: 'ion:bicycle-outline',
+    color: '#1fdaca',
+    url: '/activity',
+  },
+  {
+    title: '会员聚会',
+    content: '俱乐部年度聚会，欢迎所有会员参加',
+    date: '2024-12-20',
+    group: '聚会',
+    icon: 'ion:people-outline',
+    color: '#e18525',
+    url: '/activity',
+  },
+  {
+    title: '骑行技巧培训',
+    content: '专业教练指导，提升骑行技能',
+    date: '2024-12-18',
+    group: '培训',
+    icon: 'ion:school-outline',
+    color: '#3fb27f',
+    url: '/course',
+  },
+  {
+    title: '骑行比赛',
+    content: '俱乐部内部友谊赛，欢迎报名',
+    date: '2024-12-25',
+    group: '比赛',
+    icon: 'ion:trophy-outline',
+    color: '#bf0c2c',
+    url: '/activity',
+  },
+]);
+
+// ========== 待办事项 ==========
 const todoItems = ref<WorkbenchTodoItem[]>([
   {
     completed: false,
-    content: `审查最近提交到Git仓库的前端代码，确保代码质量和规范。`,
-    date: '2024-07-30 11:00:00',
-    title: '审查前端代码提交',
+    content: '审核新报名的活动参与者',
+    date: new Date().toISOString(),
+    title: '活动报名审核',
+  },
+  {
+    completed: false,
+    content: '检查本周即将开始的培训课程',
+    date: new Date().toISOString(),
+    title: '培训课程安排',
+  },
+  {
+    completed: false,
+    content: '审核会员提交的动态内容',
+    date: new Date().toISOString(),
+    title: '动态内容审核',
   },
   {
     completed: true,
-    content: `检查并优化系统性能，降低CPU使用率。`,
-    date: '2024-07-30 11:00:00',
-    title: '系统性能优化',
-  },
-  {
-    completed: false,
-    content: `进行系统安全检查，确保没有安全漏洞或未授权的访问。 `,
-    date: '2024-07-30 11:00:00',
-    title: '安全检查',
-  },
-  {
-    completed: false,
-    content: `更新项目中的所有npm依赖包，确保使用最新版本。`,
-    date: '2024-07-30 11:00:00',
-    title: '更新项目依赖',
-  },
-  {
-    completed: false,
-    content: `修复用户报告的页面UI显示问题，确保在不同浏览器中显示一致。 `,
-    date: '2024-07-30 11:00:00',
-    title: '修复UI显示问题',
+    content: '更新俱乐部活动日历',
+    date: new Date().toISOString(),
+    title: '活动日历更新',
   },
 ]);
-const trendItems: WorkbenchTrendItem[] = [
+
+// ========== 俱乐部动态 ==========
+const trendItems = ref<WorkbenchTrendItem[]>([
   {
     avatar: 'svg:avatar-1',
-    content: `在 <a>开源组</a> 创建了项目 <a>Vue</a>`,
+    title: '张三',
+    content: '报名参加了 <a>周末骑行活动</a>',
     date: '刚刚',
-    title: '威廉',
   },
   {
     avatar: 'svg:avatar-2',
-    content: `关注了 <a>威廉</a> `,
-    date: '1个小时前',
-    title: '艾文',
+    title: '李四',
+    content: '发布了新动态 <a>今日骑行记录</a>',
+    date: '1小时前',
   },
   {
     avatar: 'svg:avatar-3',
-    content: `发布了 <a>个人动态</a> `,
-    date: '1天前',
-    title: '克里斯',
+    title: '王五',
+    content: '完成了 <a>骑行技巧培训</a>',
+    date: '2小时前',
   },
   {
     avatar: 'svg:avatar-4',
-    content: `发表文章 <a>如何编写一个Vite插件</a> `,
-    date: '2天前',
-    title: 'Vben',
+    title: '赵六',
+    content: '加入了俱乐部，成为新会员',
+    date: '3小时前',
   },
   {
     avatar: 'svg:avatar-1',
-    content: `回复了 <a>杰克</a> 的问题 <a>如何进行项目优化？</a>`,
-    date: '3天前',
-    title: '皮特',
+    title: '孙七',
+    content: '评论了 <a>周末骑行路线推荐</a>',
+    date: '1天前',
   },
-  {
-    avatar: 'svg:avatar-2',
-    content: `关闭了问题 <a>如何运行项目</a> `,
-    date: '1周前',
-    title: '杰克',
-  },
-  {
-    avatar: 'svg:avatar-3',
-    content: `发布了 <a>个人动态</a> `,
-    date: '1周前',
-    title: '威廉',
-  },
-  {
-    avatar: 'svg:avatar-4',
-    content: `推送了代码到 <a>Github</a>`,
-    date: '2021-04-01 20:00',
-    title: '威廉',
-  },
-  {
-    avatar: 'svg:avatar-4',
-    content: `发表文章 <a>如何编写使用 Admin Vben</a> `,
-    date: '2021-03-01 20:00',
-    title: 'Vben',
-  },
-];
+]);
 
-const router = useRouter();
+// ========== 会员统计图表 ==========
+const chartRef = ref<EchartsUIType>();
+const { renderEcharts } = useEcharts(chartRef);
 
-// 这是一个示例方法，实际项目中需要根据实际情况进行调整
-// This is a sample method, adjust according to the actual project requirements
+const initChart = () => {
+  renderEcharts({
+    tooltip: {
+      trigger: 'item',
+    },
+    legend: {
+      bottom: '2%',
+      left: 'center',
+    },
+    series: [
+      {
+        name: '会员类型',
+        type: 'pie',
+        radius: ['40%', '65%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10,
+          borderWidth: 2,
+        },
+        label: {
+          show: false,
+          position: 'center',
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: '14',
+            fontWeight: 'bold',
+          },
+        },
+        labelLine: {
+          show: false,
+        },
+        data: [
+          { name: '普通会员', value: 150 },
+          { name: '高级会员', value: 80 },
+          { name: '终身会员', value: 30 },
+        ],
+        color: ['#5ab1ef', '#2ec7c9', '#ffb980'],
+      },
+    ],
+  });
+};
+
 function navTo(nav: WorkbenchProjectItem | WorkbenchQuickNavItem) {
-  if (nav.url?.startsWith('http')) {
-    openWindow(nav.url);
-    return;
-  }
   if (nav.url?.startsWith('/')) {
     router.push(nav.url).catch((error) => {
-      console.error('Navigation failed:', error);
+      console.error('导航失败:', error);
     });
-  } else {
-    console.warn(`Unknown URL for navigation item: ${nav.title} -> ${nav.url}`);
   }
 }
+
+onMounted(() => {
+  initChart();
+});
 </script>
 
 <template>
@@ -239,26 +235,40 @@ function navTo(nav: WorkbenchProjectItem | WorkbenchQuickNavItem) {
       :avatar="userStore.userInfo?.avatar || preferences.app.defaultAvatar"
     >
       <template #title>
-        早安, {{ userStore.userInfo?.realName }}, 开始您一天的工作吧！
+        欢迎回来, {{ userStore.userInfo?.realName }}！让我们一起享受骑行的乐趣 🏍️
       </template>
-      <template #description> 今日晴，20℃ - 32℃！ </template>
+      <template #description>
+        今日晴，20℃ - 32℃，适合骑行！
+      </template>
     </WorkbenchHeader>
 
     <div class="mt-5 flex flex-col lg:flex-row">
       <div class="mr-4 w-full lg:w-3/5">
-        <WorkbenchProject :items="projectItems" title="项目" @click="navTo" />
-        <WorkbenchTrends :items="trendItems" class="mt-5" title="最新动态" />
+        <WorkbenchProject 
+          :items="projectItems" 
+          title="推荐活动" 
+          @click="navTo" 
+        />
+        <WorkbenchTrends 
+          :items="trendItems" 
+          class="mt-5" 
+          title="俱乐部动态" 
+        />
       </div>
       <div class="w-full lg:w-2/5">
         <WorkbenchQuickNav
           :items="quickNavItems"
           class="mt-5 lg:mt-0"
-          title="快捷导航"
+          title="快捷入口"
           @click="navTo"
         />
-        <WorkbenchTodo :items="todoItems" class="mt-5" title="待办事项" />
-        <AnalysisChartCard class="mt-5" title="访问来源">
-          <AnalyticsVisitsSource />
+        <WorkbenchTodo 
+          :items="todoItems" 
+          class="mt-5" 
+          title="待办事项" 
+        />
+        <AnalysisChartCard class="mt-5" title="会员统计">
+          <EchartsUI ref="chartRef" />
         </AnalysisChartCard>
       </div>
     </div>
