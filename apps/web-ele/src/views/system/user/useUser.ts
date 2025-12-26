@@ -1,4 +1,4 @@
-// useUser.ts  业务逻辑
+// useUser.ts - 生产版本（移除所有日志）
 import { ref, onMounted, nextTick } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import type { FormInstance, UploadFile } from 'element-plus';
@@ -16,10 +16,12 @@ export function useUser() {
   const page = ref(1);
   const pageSize = ref(10);
   const keyword = ref('');
+  
   // ==================== 表单状态 ====================
   const formVisible = ref(false);
   const formRef = ref<FormInstance>();
   const form = ref<User>({ ...DEFAULT_USER });
+  
   // ==================== 查询用户列表 ====================
   const fetchUsers = async () => {
     loading.value = true;
@@ -31,6 +33,7 @@ export function useUser() {
           keyword: keyword.value || undefined
         }
       });
+      
       const data = res?.data?.data || res?.data || res;
       userList.value = data.list || [];
       total.value = Number(data.total) || 0;
@@ -40,50 +43,54 @@ export function useUser() {
       loading.value = false;
     }
   };
+  
   // ==================== 重置搜索 ====================
   const resetSearch = () => {
     keyword.value = '';
     page.value = 1;
     fetchUsers();
   };
+  
   // ==================== 打开新增对话框 ====================
   const openAddDialog = () => {
     form.value = { ...DEFAULT_USER };
     formVisible.value = true;
     nextTick(() => formRef.value?.clearValidate());
   };
+  
   // ==================== 编辑用户 ====================
   const editUser = (row: User) => {
     form.value = { ...row, password: '' };
     formVisible.value = true;
     nextTick(() => formRef.value?.clearValidate());
   };
+  
   // ==================== 保存用户 ====================
   const saveUser = async () => {
-    if (!formRef.value) return;
-    
     try {
-      await formRef.value.validate();
-      
       const endpoint = form.value.id ? '/user/update' : '/user/add';
       const method = form.value.id ? 'put' : 'post';
       
       const submitData: any = { ...form.value };
-      // 编辑时如果密码为空，删除 password 字段
+      
       if (form.value.id && !submitData.password) {
         delete submitData.password;
       }
       
       await requestClient[method](endpoint, submitData);
+      
       ElMessage.success(form.value.id ? '更新成功' : '新增成功');
       formVisible.value = false;
-      fetchUsers();
+      
+      await fetchUsers();
     } catch (error: any) {
-      if (error !== false) {
-        ElMessage.error('保存失败');
-      }
+      const errorMsg = error?.response?.data?.message 
+        || error?.message 
+        || '保存失败，请重试';
+      ElMessage.error(errorMsg);
     }
   };
+  
   // ==================== 删除用户 ====================
   const deleteUser = async (row: User) => {
     try {
@@ -96,7 +103,6 @@ export function useUser() {
       await requestClient.post('/user/delete', { id: row.id });
       ElMessage.success('删除成功');
       
-      // 如果删除的是当前页最后一条且不是第一页，跳转到上一页
       if (userList.value.length === 1 && page.value > 1) {
         page.value--;
       }
@@ -108,6 +114,7 @@ export function useUser() {
       }
     }
   };
+  
   // ==================== 导入用户 ====================
   const handleImport = async (file: UploadFile) => {
     const formData = new FormData();
@@ -130,6 +137,7 @@ export function useUser() {
       ElMessage.error('导入失败');
     }
   };
+  
   // ==================== 下载 Blob 文件 ====================
   const downloadBlob = (blob: Blob, fileName: string) => {
     const url = URL.createObjectURL(blob);
@@ -146,6 +154,7 @@ export function useUser() {
       URL.revokeObjectURL(url);
     }, 200);
   };
+  
   // ==================== 导出用户 ====================
   const handleExport = async () => {
     const loadingMsg = ElMessage.info({ 
@@ -158,7 +167,6 @@ export function useUser() {
         responseType: 'blob'
       });
       
-      // 提取 Blob
       let blob: Blob | null = null;
       
       if (response instanceof Blob) {
@@ -182,32 +190,33 @@ export function useUser() {
       
       loadingMsg.close();
       ElMessage.success('导出成功！');
-      
     } catch (error: any) {
       loadingMsg.close();
       
-      // 特殊处理：error 本身可能是 Blob
       if (error instanceof Blob) {
         const fileName = `用户数据_${Date.now()}.xlsx`;
         downloadBlob(error, fileName);
         ElMessage.success('导出成功！');
       } else {
-        console.error('导出错误：', error);
         ElMessage.error('导出失败');
       }
     }
   };
+  
   // ==================== 辅助方法 ====================
   const getRoleTagType = (role: string) => {
     return ROLE_TAG_TYPE_MAP[role] || '';
   };
+  
   const getRoleName = (role: string) => {
     return ROLE_OPTIONS.find(r => r.value === role)?.label || role;
   };
+  
   // ==================== 生命周期 ====================
   onMounted(() => {
     fetchUsers();
   });
+  
   return {
     // 列表状态
     loading,
