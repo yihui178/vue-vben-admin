@@ -41,12 +41,12 @@ export const useAuthStore = defineStore('auth', () => {
       accessStore.setAccessToken(accessToken);
       localStorage.setItem('refreshToken', refreshToken);
 
-      // ✅ 重置认证状态
+      // 重置认证状态
       resetAuthState();
 
-      // ✅ 重置会员状态（使用自定义 Store）
+      // 重置会员状态（使用自定义 Store）
       customUserStore.reset();
-      console.log('✅ 已重置会员状态');
+      console.log('已重置会员状态');
 
       // 获取用户信息和权限码
       const [userInfo, accessCodes] = await Promise.all([
@@ -58,7 +58,7 @@ export const useAuthStore = defineStore('auth', () => {
         throw new Error('获取用户信息失败');
       }
 
-      // ✅ 使用框架的 Store 设置用户信息
+      // 使用框架的 Store 设置用户信息
       vbenUserStore.setUserInfo(userInfo);
       accessStore.setAccessCodes(accessCodes);
 
@@ -92,25 +92,14 @@ export const useAuthStore = defineStore('auth', () => {
    * 登出
    */
   async function logout(redirect: boolean = true) {
-    try {
       await logoutApi();
-      console.log('✅ 后端登出成功');
-    } catch (error) {
-      console.error('⚠️ 后端登出失败:', error);
-    }
 
-    // ✅ 清除会员状态缓存（使用自定义 Store）
+    // 清除会员状态缓存（使用自定义 Store）
     customUserStore.clearCache();
-    console.log('✅ 会员状态缓存已清除');
 
-    // ✅ 重置所有 Store（包括框架的）
-    try {
+    // 重置所有 Store（包括框架的）
       resetAllStores();
-      console.log('✅ 所有 Store 已重置');
-    } catch (error) {
-      console.error('⚠️ 重置 Store 失败:', error);
-    }
-    
+   
     // 清除 Token
     localStorage.removeItem('refreshToken');
     
@@ -122,8 +111,7 @@ export const useAuthStore = defineStore('auth', () => {
         ? { redirect: encodeURIComponent(router.currentRoute.value.fullPath) }
         : {},
     });
-    
-    console.log('✅ 登出完成');
+
   }
 
   /**
