@@ -47,7 +47,6 @@ const {
 
 onMounted(async () => {
   await userStore.checkMemberStatus();
-  console.log('📋 Member 页面会员状态:', userStore.isMember);
 });
 
 // ✅ 修改后：只跳转到活动页面，不传递课程信息

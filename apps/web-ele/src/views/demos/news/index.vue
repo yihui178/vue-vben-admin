@@ -60,11 +60,7 @@ const fetchNews = async () => {
     }
     
     const res = await requestClient.get(url, { params });
-    
-    // ✅ 调试：打印响应数据
-    console.log('📦 响应数据:', res);
-    
-    // ✅ 兼容处理：尝试从 res.data 或 res 中读取
+    // 兼容处理：尝试从 res.data 或 res 中读取
     let pageData;
     if (res.data && res.data.list !== undefined) {
       // 情况1: { data: { list: [], total: 0 } }
@@ -79,11 +75,6 @@ const fetchNews = async () => {
     
     newsList.value = pageData.list || [];
     total.value = Number(pageData.total) || 0;
-    
-    console.log('✅ 解析结果:', {
-      newsList: newsList.value.length,
-      total: total.value,
-    });
   } catch (error: any) {
     ElMessage.error('加载失败：' + (error?.message || '未知错误'));
     console.error('❌ 加载失败:', error);
@@ -91,7 +82,7 @@ const fetchNews = async () => {
     loading.value = false;
   }
 };
-// ✅ 修改：删除动态
+// 修改：删除动态
 const removeNews = async (news: any) => {
   try {
     await ElMessageBox.confirm('确定删除该动态吗？', '提示', {
@@ -107,7 +98,7 @@ const removeNews = async (news: any) => {
   }
 };
 
-// ✅ 新增：审核动态
+// 新增：审核动态
 const reviewNews = async (news: any, action: string) => {
   try {
     const text = action === 'approve' ? '通过' : '拒绝';
@@ -129,7 +120,7 @@ const reviewNews = async (news: any, action: string) => {
   }
 };
 
-// ✅ 新增：获取状态标签类型
+// 新增：获取状态标签类型
 const getStatusTag = (status: string) => {
   const map: Record<string, string> = {
     pending: 'warning',
@@ -139,7 +130,7 @@ const getStatusTag = (status: string) => {
   return map[status] || 'info';
 };
 
-// ✅ 新增：获取状态文本
+// 新增：获取状态文本
 const getStatusText = (status: string) => {
   const map: Record<string, string> = {
     pending: '待审核',
@@ -151,7 +142,6 @@ const getStatusText = (status: string) => {
 
 onMounted(async () => {
   await userStore.checkMemberStatus();
-  console.log('📋 News 页面会员状态:', userStore.isMember);
   fetchNews();
 });
 </script>
@@ -219,7 +209,7 @@ onMounted(async () => {
           />
         </el-select>
         
-        <!-- ✅ 新增：管理员可筛选审核状态 -->
+        <!-- 新增：管理员可筛选审核状态 -->
         <el-select
           v-if="isAdmin"
           v-model="selectedStatus"
@@ -308,7 +298,7 @@ onMounted(async () => {
             </el-tag>
           </div>
           
-          <!-- ✅ 新增：审核状态标签（右上角） -->
+          <!-- 新增：审核状态标签（右上角） -->
           <div v-if="isAdmin" class="absolute top-3 right-3">
             <el-tag
               :type="getStatusTag(news.status)"
@@ -330,7 +320,7 @@ onMounted(async () => {
               {{ news.newsDescription }}
             </div>
             
-            <!-- ✅ 新增：显示发布者 -->
+            <!-- 新增：显示发布者 -->
             <div v-if="isAdmin && news.creatorName" class="text-xs text-muted-foreground mb-2">
               <span class="i-mdi:account mr-1" />发布者：{{ news.creatorName }}
             </div>
@@ -349,7 +339,7 @@ onMounted(async () => {
             </el-tag>
           </div>
           
-          <!-- ✅ 修改：操作按钮 -->
+          <!-- 修改：操作按钮 -->
           <div class="flex justify-end gap-2 pt-3 border-t">
             <template v-if="isAdmin">
               <!-- 待审核才显示审核按钮 -->
@@ -422,7 +412,7 @@ onMounted(async () => {
                 {{ cat }}
               </el-tag>
               
-              <!-- ✅ 新增：状态标签 -->
+              <!-- 新增：状态标签 -->
               <el-tag
                 v-if="isAdmin"
                 :type="getStatusTag(news.status)"
@@ -446,14 +436,14 @@ onMounted(async () => {
               </el-tag>
             </div>
             
-            <!-- ✅ 新增：发布者信息 -->
+            <!-- 新增：发布者信息 -->
             <div v-if="isAdmin && news.creatorName" class="text-xs text-muted-foreground">
               发布者：{{ news.creatorName }}
             </div>
           </div>
         </div>
         
-        <!-- ✅ 修改：右侧操作按钮 -->
+        <!-- 修改：右侧操作按钮 -->
         <div class="flex-shrink-0 flex items-center gap-2">
           <template v-if="isAdmin">
             <el-button

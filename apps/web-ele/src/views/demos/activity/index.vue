@@ -46,10 +46,9 @@ const {
   getEnrollmentStatusText,
 } = useActivity();
 
-// ✅ 检查会员状态
+// 检查会员状态
 onMounted(async () => {
   await userStore.checkMemberStatus();
-  console.log('📋 Activity 页面会员状态:', userStore.isMember);
 });
 
 // ==================== 报名功能 ====================
@@ -60,17 +59,14 @@ const enrollForm = ref({
   memberName: '',
   memberPhone: '',
   remark: '',
-  // ✅ 新增字段
+  // 新增字段
   enrollmentType: 'activity', // training | activity
   courseId: null as number | null,
   courseName: '',
 });
 
-// ✅ 修改后的打开报名对话框
+// 修改后的打开报名对话框
 const openEnrollDialog = (activity: any) => {
-  console.log('🎯 点击报名');
-  console.log('📋 isMember:', isMember.value);
-  console.log('📋 isAdmin:', isAdmin.value);
   
   if (!isMember.value && !isAdmin.value) {
     ElMessage.warning('只有会员才能报名活动');
@@ -83,7 +79,7 @@ const openEnrollDialog = (activity: any) => {
     memberName: '',
     memberPhone: '',
     remark: '',
-    // ✅ 重置为普通活动
+    // 重置为普通活动
     enrollmentType: 'activity',
     courseId: null,
     courseName: '',
@@ -92,7 +88,7 @@ const openEnrollDialog = (activity: any) => {
   enrollDialogVisible.value = true;
 };
 
-// ✅ 修改后的提交报名
+// 修改后的提交报名
 const submitEnroll = async () => {
   if (!enrollForm.value.memberName.trim()) {
     ElMessage.warning('请输入姓名');
@@ -107,11 +103,10 @@ const submitEnroll = async () => {
     ElMessage.warning('请输入正确的手机号');
     return;
   }
-
   try {
     await requestClient.post('/enrollment/enroll', enrollForm.value);
     
-    // ✅ 根据报名类型显示不同提示
+    // 成功后的提示
     const successMsg = enrollForm.value.enrollmentType === 'training'
       ? '课程报名成功，请等待审核'
       : '报名成功，请等待审核';
@@ -120,14 +115,12 @@ const submitEnroll = async () => {
     enrollDialogVisible.value = false;
     fetchActivities();
     
-    // ✅ 如果是从课程页面跳转来的，清除 URL 参数
+    // 清除 URL 参数
     if (route.query.type) {
       router.replace({ query: {} });
     }
   } catch (error: any) {
-    const errorMsg =
-      error?.response?.data?.message || error?.message || '报名失败';
-    ElMessage.error(errorMsg);
+    console.error('报名失败:', error);
   }
 };
 
@@ -288,7 +281,7 @@ const canEnroll = (activity: any) => {
       @review="reviewEnrollment"
     />
 
-    <!-- ✅ 报名对话框（支持培训和活动） -->
+    <!-- 报名对话框（支持培训和活动） -->
     <el-dialog 
       v-model="enrollDialogVisible" 
       :title="enrollForm.enrollmentType === 'training' ? '课程报名' : '活动报名'" 
@@ -297,7 +290,7 @@ const canEnroll = (activity: any) => {
     >
       <el-form :model="enrollForm" label-width="100px">
         
-        <!-- ✅ 培训课程提示 -->
+        <!-- 培训课程提示 -->
         <el-alert 
           v-if="enrollForm.enrollmentType === 'training'"
           type="success"

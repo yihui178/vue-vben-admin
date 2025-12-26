@@ -1,5 +1,5 @@
 // useActivity.ts
-import { ref, onMounted } from 'vue'; // ✅ 移除 nextTick
+import { ref, onMounted } from 'vue'; // 移除 nextTick
 import { ElMessage, ElMessageBox } from 'element-plus';
 import type { FormInstance } from 'element-plus';
 import { requestClient } from '#/api/request';
@@ -19,7 +19,7 @@ export function useActivity() {
   const keyword = ref('');
 
   const formVisible = ref(false);
-  const activityFormRef = ref(); // ✅ 改为存储子组件实例
+  const activityFormRef = ref(); //  改为存储子组件实例
   const form = ref<Activity>(createDefaultActivity());
 
   const enrollmentVisible = ref(false);
@@ -71,29 +71,24 @@ export function useActivity() {
 
   // ==================== 保存活动 ====================
   const saveActivity = async () => {
-    console.log('=== 开始保存活动 ===');
-    console.log('activityFormRef:', activityFormRef.value);
     
-    // ✅ 获取子组件暴露的 formRef
+    // 获取子组件暴露的 formRef
     const formInstance = activityFormRef.value?.formRef;
     console.log('formInstance:', formInstance);
     
     if (!formInstance) {
-      console.error('表单引用不存在');
       ElMessage.error('表单初始化失败');
       return;
     }
 
     try {
-      console.log('开始表单验证...');
+
       await formInstance.validate();
-      console.log('表单验证通过');
-      console.log('表单数据:', form.value);
+
 
       const endpoint = form.value.id ? '/activity/update' : '/activity/add';
       const method = form.value.id ? 'put' : 'post';
 
-      console.log('请求:', method, endpoint);
 
       await requestClient[method](endpoint, form.value);
 
@@ -101,7 +96,7 @@ export function useActivity() {
       formVisible.value = false;
       fetchActivities();
     } catch (error: any) {
-      console.error('保存失败:', error);
+
 
       if (error !== false) {
         const errorMsg =
@@ -227,7 +222,7 @@ export function useActivity() {
     pageSize,
     keyword,
     formVisible,
-    activityFormRef, // ✅ 改为返回子组件ref
+    activityFormRef, 
     form,
     enrollmentVisible,
     enrollmentLoading,

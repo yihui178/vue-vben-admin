@@ -45,7 +45,6 @@ const viewDetail = (row: any) => {
 // 检查会员状态
 onMounted(async () => {
   await userStore.checkMemberStatus();
-  console.log('📋 Member 页面会员状态:', userStore.isMember);
 });
 </script>
 
