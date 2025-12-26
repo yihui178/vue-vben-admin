@@ -141,9 +141,9 @@ function handleClick(item: NotificationItem) {
         >
           {{ $t('ui.widgets.clearNotifications') }}
         </VbenButton>
-        <VbenButton size="sm" @click="handleViewAll">
+        <!-- <VbenButton size="sm" @click="handleViewAll">
           {{ $t('ui.widgets.viewAll') }}
-        </VbenButton>
+        </VbenButton> -->
       </div>
     </div>
   </VbenPopover>
