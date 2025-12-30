@@ -5,3 +5,7 @@ node_modules
 dist
 .turbo
 dist.zip
+.vscode
+.idea
+*.log
+.DS_Store
