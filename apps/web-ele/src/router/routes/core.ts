@@ -7,6 +7,7 @@ import { $t } from '#/locales';
 
 const BasicLayout = () => import('#/layouts/basic.vue');
 const AuthPageLayout = () => import('#/layouts/auth.vue');
+
 /** 全局404页面 */
 const fallbackNotFoundRoute: RouteRecordRaw = {
   component: () => import('#/views/_core/fallback/not-found.vue'),
@@ -22,11 +23,6 @@ const fallbackNotFoundRoute: RouteRecordRaw = {
 
 /** 基本路由，这些路由是必须存在的 */
 const coreRoutes: RouteRecordRaw[] = [
-  /**
-   * 根路由
-   * 使用基础布局，作为所有页面的父级容器，子级就不必配置BasicLayout。
-   * 此路由必须存在，且不应修改
-   */
   {
     component: BasicLayout,
     meta: {
@@ -40,6 +36,31 @@ const coreRoutes: RouteRecordRaw[] = [
   },
   {
     component: AuthPageLayout,
+    // 🔥 关键修改：添加 props 配置
+    props: {
+      // 左侧主图片（这就是您要改的！）
+      // sloganImage: '',
+      // 页面标题
+      pageTitle: '智能管理，安全骑行',
+      
+      // 页面描述
+      pageDescription: '🏍️ 基于 Spring Boot + Vue 3 的现代化管理系统',
+      
+      // 应用名称
+      appName: '摩托车骑行俱乐部',
+      
+      // Logo
+      // logo: '/logo.svg',
+      
+      // 是否显示工具栏
+      toolbar: true,
+      
+      // 工具栏项目
+      toolbarList: ['color', 'language', 'theme'],
+      
+      // 是否显示版权信息
+      copyright: true,
+    },
     meta: {
       hideInTab: true,
       title: 'Authentication',
