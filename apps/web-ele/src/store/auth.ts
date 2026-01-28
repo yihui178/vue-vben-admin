@@ -1,3 +1,4 @@
+// src/store/auth.ts
 import type { UserInfo } from '@vben/types';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
