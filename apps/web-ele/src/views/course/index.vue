@@ -45,10 +45,6 @@ const {
   deleteHighlight,
 } = useCourse();
 
-onMounted(async () => {
-  await userStore.checkMemberStatus();
-});
-
 // ✅ 修改后：只跳转到活动页面，不传递课程信息
 const goToEnroll = () => {
   router.push({

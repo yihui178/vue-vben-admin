@@ -141,7 +141,6 @@ const getStatusText = (status: string) => {
 };
 
 onMounted(async () => {
-  await userStore.checkMemberStatus();
   fetchNews();
 });
 </script>

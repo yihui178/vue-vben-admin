@@ -42,10 +42,6 @@ const viewDetail = (row: any) => {
   detailVisible.value = true;
 };
 
-// 检查会员状态
-onMounted(async () => {
-  await userStore.checkMemberStatus();
-});
 </script>
 
 <template>

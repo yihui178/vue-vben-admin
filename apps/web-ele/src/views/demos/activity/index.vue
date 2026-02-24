@@ -46,10 +46,6 @@ const {
   getEnrollmentStatusText,
 } = useActivity();
 
-// 检查会员状态
-onMounted(async () => {
-  await userStore.checkMemberStatus();
-});
 
 // ==================== 报名功能 ====================
 const enrollDialogVisible = ref(false);

@@ -53,6 +53,7 @@ export const useAuthStore = defineStore('auth', () => {
       const [userInfo, accessCodes] = await Promise.all([
         getUserInfoApi(),
         getAccessCodesApi(),
+        customUserStore.checkMemberStatus(),
       ]);
 
       if (!userInfo) {
